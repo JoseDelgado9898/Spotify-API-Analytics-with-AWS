@@ -1,0 +1,5 @@
+.env
+python/
+libs
+snowflake_connection.py
+python.zip
