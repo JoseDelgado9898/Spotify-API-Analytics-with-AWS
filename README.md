@@ -12,3 +12,4 @@ Using a simple Python script which is executed and scheduled using AWS Lambda + 
 
 ## Architecture Diagram
 
+<img width="500" height="470" alt="Architecture Diagram drawio" src="https://github.com/user-attachments/assets/b5b718a0-4301-47d3-b148-481ab35f2da1" />
