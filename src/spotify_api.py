@@ -61,6 +61,7 @@ if __name__=='__main__':
     load_dotenv()
     current_date = date.today()
     token = generate_bearer()
+    print(token)
     s3_client= S3_Client()
     artist_ids = [
     "4YRxDV8wJFPHPTeXepOstw", "06HL4z0CvFAxyc27GXpf02", "6eUKZXaKkcviH0Ku9w2n3V",
@@ -73,6 +74,7 @@ if __name__=='__main__':
 ]
     for id in artist_ids:
         data = get_artist(id,token)
+        print(data)
         key=f'{date.today()}/{data['name']}'
-        s3_client.upload_object(data,'spotify-s3-poc',key)
+        #s3_client.upload_object(data,'spotify-s3-poc',key)
 
