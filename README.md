@@ -27,7 +27,7 @@ Once the data has been stored and cleaned, Athena can be used to query using SQL
     FROM 
         spotify.spotify_gold_view gv
     where
-    CAST(gv.date as DATE)=CURRENT_DATE
+        CAST(gv.date as DATE)=CURRENT_DATE
     ORDER BY 
         FOLLOWERS DESC;
 
@@ -35,13 +35,13 @@ Once the data has been stored and cleaned, Athena can be used to query using SQL
 
 ### Which artists are getting the highest increases in follower count per day?
 ```
-  SELECT 
-      name as Artist,
-      CAST(avg(Followers_Gained) as INT) as AVG_DAILY_FOLLOWERS_GAINED 
-  FROM 
-      spotify.artists_silver
-  GROUP BY
-      name
-  ORDER BY
-     AVG_DAILY_FOLLOWERS_GAINED DESC;
+    SELECT 
+        name as Artist,
+        CAST(avg(Followers_Gained) as INT) as AVG_DAILY_FOLLOWERS_GAINED 
+    FROM 
+        spotify.spotify_gold_view
+    GROUP BY
+        name
+    ORDER BY
+        AVG_DAILY_FOLLOWERS_GAINED DESC;
 ```
