@@ -1,3 +1,4 @@
+import json
 import boto3
 import time
 import botocore
@@ -6,16 +7,18 @@ class Athena_Wrapper:
         self.client = boto3.client('athena',region_name='us-east-1')
         self.database = database
         self.result_output_s3 = result_output_s3
-    
+
     def execute_query(self,query):
         try:
             response = self.client.start_query_execution(
                 QueryString = query,
-                ResultConfiguration={"OutputLocation": self.result_output_s3}
+                ResultConfiguration={"OutputLocation": self.result_output_s3},
+                WorkGroup="primary"
             )
             return response['QueryExecutionId']
         except botocore.exceptions.ClientError as e:
             print(f'Failed to exectue the query. Error: {e}')
+
     def has_query_succeeded(self,execution_id):
         state = "RUNNING"
         max_execution = 5
@@ -34,7 +37,7 @@ class Athena_Wrapper:
                 time.sleep(5)
         except botocore.exceptions.ClientError as e:
             print(f'[Error]: {e}')
-
+        print(f"Query {execution_id} has not succeeded yet. Current state: {state}")
         return False
     def get_query_results(self,execution_id):
         try:
@@ -46,25 +49,34 @@ class Athena_Wrapper:
             print(f'Failed to fetch query results: {e}')
         return results
 
-client = Athena_Wrapper('spotify','s3://athena-spotify-results-poc/')
-exec_id = client.execute_query(
+
+def lambda_handler(event, context):
+    client = Athena_Wrapper('spotify','s3://athena-spotify-results-poc/')
+    exec_id = client.execute_query(
     f"""
-    MERGE INTO spotify.Artists_Silver t
-    USING(
-        
-        SELECT 
-            SUBSTR("$path",21,10) as Date,
-            json_extract_scalar(json_string,'$.name') as Name,
-            CAST(json_extract_scalar(json_extract(json_string,'$.followers'),'$.total') as INT) as Followers
-        FROM 
-            spotify.Artists
-        WHERE 
-            SUBSTR("$path",21,10) = date_format(current_date, '%Y-%m-%d')
-            ) s
-    ON s.date=t.date and s.name=t.name
-    WHEN NOT MATCHED THEN INSERT (Date,Name,followers) VALUES (s.date,s.name,s.followers)
-    """
+        MERGE INTO spotify.Artists_Silver t
+        USING(
+            
+            SELECT 
+                SUBSTR("$path",21,10) as Date,
+                json_extract_scalar(json_string,'$.name') as Name,
+                CAST(json_extract_scalar(json_extract(json_string,'$.followers'),'$.total') as INT) as Followers
+            FROM 
+                spotify.Artists
+            WHERE 
+                SUBSTR("$path",21,10) = date_format(current_date, '%Y-%m-%d')
+                ) s
+        ON s.date=t.date and s.name=t.name
+        WHEN NOT MATCHED THEN INSERT (Date,Name,followers) VALUES (s.date,s.name,s.followers)
+        """
 )
-print(f'Query status: {client.has_query_succeeded(exec_id)}')
-result = client.get_query_results(exec_id)
-print(result)
+    if(client.has_query_succeeded(exec_id)):
+        print('Query sucesfully executed')
+    else:  
+        print('Query was not executed correctly.')
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Hello from Lambda!')
+    }
+lambda_handler(1,2)
