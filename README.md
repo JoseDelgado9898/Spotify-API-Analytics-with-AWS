@@ -1,6 +1,6 @@
 # Project Overview
 
-The primary objective of this project is to analyze Spotify public data by building a fully automated serverless data pipeline using AWS services. This is a lightweight solution designed for cost-effectiveness and relatively low volumes of data
+The primary objective of this project is to analyze Spotify public data by building a fully automated serverless data pipeline using AWS services. This is a lightweight solution designed for cost-effectiveness and relatively low volumes of data.
 
 Using a simple Python script which is executed and scheduled using AWS Lambda + Eventbridge, the Spotify API is consumed and the resulting JSON responses are stored in an S3 bucket, this process is executed on a daily basis and separated directories are created per day, containing data about the 20 most followed artists in Spotify. Following a medallion architecture approach, when new files land in S3, a lambda function is automatically triggered, which invokes the Athena API (boto3 athena client) to transform data into a structured format and save it again in S3 (silver/cleaned layer).
 
@@ -12,7 +12,8 @@ Using a simple Python script which is executed and scheduled using AWS Lambda + 
 
 ## Architecture Diagram
 
-<img width="500" height="470" alt="Architecture Diagram drawio" src="https://github.com/user-attachments/assets/b5b718a0-4301-47d3-b148-481ab35f2da1" />
+![Architecture Diagram.drawio](./other/architecture-diagram.png)
+
 
 ## Business Intelligence Use Case Examples
 
