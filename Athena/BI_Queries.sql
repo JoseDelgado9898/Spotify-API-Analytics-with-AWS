@@ -1,12 +1,11 @@
-
 -- Who are the top 5 most followed artists as of today's date?
 
 SELECT 
     * 
 FROM 
-    spotify.spotify_gold_view gv
+    Spotify_Gold_View
 where
-   CAST(gv.date as DATE)=CURRENT_DATE
+   CAST(date as DATE)=CURRENT_DATE
 ORDER BY 
     FOLLOWERS DESC
 LIMIT 5;
@@ -17,7 +16,7 @@ SELECT
     name as Artist,
     CAST(avg(Followers_Gained) as INT) as AVG_DAILY_FOLLOWERS_GAINED 
 FROM 
-    spotify.spotify_gold_view
+    Spotify_Gold_View
 GROUP BY
     name
 ORDER BY
@@ -29,8 +28,8 @@ ORDER BY
 SELECT 
     DATE, followers_gained
 FROM
-    spotify.spotify_gold_view
+    Spotify_Gold_View
 WHERE 
     name='Taylor Swift'
 AND
-    Followers_Gained = (SELECT MAX(Followers_Gained) FROM spotify.spotify_gold_view where name='Taylor Swift');
+    Followers_Gained = (SELECT MAX(Followers_Gained) FROM Spotify_Gold_View where name='Taylor Swift');
