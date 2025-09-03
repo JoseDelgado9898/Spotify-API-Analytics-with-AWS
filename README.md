@@ -12,7 +12,7 @@ Using a simple Python script which is executed and scheduled using AWS Lambda + 
 
 ## Architecture Diagram
 
-![Architecture Diagram.drawio](./other/Architecture Diagram.drawio.png)
+![Architecture Diagram.drawio](./other/Architecture-Diagram.png)
 
 
 ## Business Intelligence Use Case Examples
